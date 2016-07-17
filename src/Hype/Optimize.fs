@@ -448,13 +448,13 @@ type Optimize =
                         if stagnation >= s then
                             if not par.Silent then Util.printLog "*** EARLY STOPPING TRIGGERED: Stagnation ***"
                             earlystop <- true
-                    | _ -> ()
+                    | NoEarly -> ()
 
                 if not par.Silent then 
                     match par.EarlyStopping with
                     | Early(s, _) ->
                         Util.printLog (sprintf "%*i/%i | %O [%s%s] | Stag:%*i" ichars (i + 1) iters l' (ldiffchar repldiff) replbestchar (s.ToString().Length) stagnation)
-                    | _ ->
+                    | NoEarly ->
                         Util.printLog (sprintf "%*i/%i | %O [%s%s]" ichars (i + 1) iters l' (ldiffchar repldiff) replbestchar)
 
                 repllast <- l'
@@ -660,7 +660,7 @@ type Optimize =
                                 if overfitting >= o then 
                                     if not par.Silent then Util.printLog "*** EARLY STOPPING TRIGGERED: Overfitting ***"
                                     earlystop <- true
-                            | _ -> ()
+                            | NoEarly -> ()
 
                 if batch % par.ValidationInterval = 0 then
                     let repldiff = l' - repllast
@@ -676,7 +676,7 @@ type Optimize =
                                 if stagnation >= s then
                                     if not par.Silent then Util.printLog "*** EARLY STOPPING TRIGGERED: Stagnation of training loss ***"
                                     earlystop <- true
-                            | _ -> ()
+                            | NoEarly -> ()
                     repllast <- l'
 
                     if Dataset.isEmpty v then
@@ -684,7 +684,7 @@ type Optimize =
                             match par.EarlyStopping with
                             | Early(s, _) ->
                                 Util.printLog (sprintf "%*i/%i | Batch %*i/%i | %O [%s%s] | Stag:%*i" echars (epoch + 1) epochs bchars (batch + 1) batches l' (ldiffchar repldiff) replbestchar (s.ToString().Length) stagnation)
-                            | _ ->
+                            | NoEarly ->
                                 Util.printLog (sprintf "%*i/%i | Batch %*i/%i | %O [%s%s]" echars (epoch + 1) epochs bchars (batch + 1) batches l' (ldiffchar repldiff) replbestchar)
                     else
                         let vl' = qvalid w
@@ -704,13 +704,13 @@ type Optimize =
                                     if stagnation >= s then 
                                         if not par.Silent then Util.printLog "*** EARLY STOPPING TRIGGERED: Stagnation of validation loss ***"
                                         earlystop <- true
-                                | _ -> ()
+                                | NoEarly -> ()
 
                         if not par.Silent then
                             match par.EarlyStopping with
                             | Early(s, o) -> 
                                 Util.printLog (sprintf "%*i/%i | Batch %*i/%i | %O [%s%s] | Valid %O [%s%s] | Stag:%*i Ovfit:%*i" echars (epoch + 1) epochs bchars (batch + 1) batches l' (ldiffchar repldiff) replbestchar vl' (ldiffchar repvldiff) repvlbestchar (s.ToString().Length) stagnation (o.ToString().Length) overfitting)
-                            | _ ->
+                            | NoEarly ->
                                 Util.printLog (sprintf "%*i/%i | Batch %*i/%i | %O [%s%s] | Valid %O [%s%s]" echars (epoch + 1) epochs bchars (batch + 1) batches l' (ldiffchar repldiff) replbestchar vl' (ldiffchar repvldiff) repvlbestchar)
                         repvllast <- vl'
                         par.LoggingFunction epoch w l'
