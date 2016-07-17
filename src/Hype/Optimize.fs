@@ -464,6 +464,7 @@ type Optimize =
             match lr i w f l' g' gcache p' with
             | :? D as a -> u' <- a * p'; // A scalar learning rate
             | :? DV as a -> u' <- a .* p'; // Vector of independent learning rates
+            | res -> failwithf "unexpected result type %s from learning rate function during optimization" (res.GetType().Name)
 
             u' <- mom u u'
 
@@ -718,6 +719,7 @@ type Optimize =
                 match lr epoch w (q batch) l' g' gcache p' with
                 | :? D as a -> u' <- a * p'  // A scalar learning rate
                 | :? DV as a -> u' <- a .* p' // Vector of independent learning rates
+                | res -> failwithf "unexpected result type %s from learning rate function during training" (res.GetType().Name)
 
                 u' <- mom u u'
 
